@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"></meta>
+  <title>FileUpload</title>
+  <base href="/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" ></meta>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+</head>
+<body>
+  Select file to Upload : <input type="file" id="fileUpload" />
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript">
+  /*<![CDATA[*/
+  	
+	  
+	  $('#fileUpload').on('change', function() {
+		  var file =  $('#fileUpload')[0].files[0];
+	      var reader = new FileReader();
+	      reader.onload = function(readerEvt) {
+	    	  var binaryStr = readerEvt.target.result;
+              var base64Str = btoa(binaryStr);
+              console.log(' base64Str ', base64Str);
+              console.log(' file ', file);
+              uploadToServer(base64Str, file);
+	      };
+	      reader.readAsBinaryString(file);
+	  });
+  
+  
+  	  function uploadToServer(base64Str, file) {
+  		var data = JSON.stringify({
+  		    	'base64Str' : base64Str,
+  		    	'name' : file.name,
+  		    	'type' : file.type,
+  		    	'size' : file.size
+  		    }); 
+  		jQuery.ajax ({
+  		    url: '/uploadFile',
+  		    type: "POST",
+  		    data:  data,
+  		    dataType: "json",
+  		    contentType: "application/json; charset=utf-8",
+  		    success: function(){
+  		        alert('data upload as json successfully.');
+  		      	$("#fileUpload").val('');
+  		    }
+  		});
+  
+  	  }
+  	/*]]>*/
+  </script>
+</body>
+</html>
